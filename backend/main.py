@@ -2,8 +2,7 @@ from fastapi import FastAPI, Body, Depends
 import uvicorn
 import time
 
-from auth_bearer import JWTBearer
-from auth_handler import signJWT
+from auth_handler import signJWT, JWTBearer
 
 app = FastAPI()
 
@@ -15,6 +14,10 @@ def check_user(data: dict):
             return True
     return False
 
+def add_user(data: dict):
+    users.append({'email':data['email'], 'password':data['password']})
+    return True
+
 @app.post("/login")
 def login(user = Body(...)):
     if check_user(user):
@@ -22,6 +25,15 @@ def login(user = Body(...)):
     return {
         "error": "Wrong login details!"
     }
+
+@app.post("/register")
+def register(user = Body(...)):
+    if check_user(user):
+        return {
+            "error": "User Email already exists."
+        }
+    add_user(user)
+    return signJWT(user['email'])
 
 @app.get("/")
 def read_root():
