@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Grid, Paper } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import {Link, useHistory} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import {useRecoilState} from 'recoil';
 import {userState} from './state'
 
@@ -29,16 +29,16 @@ const useStyles = makeStyles({
     }
 });
 
-function Login() {
+function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [user, setUser] = useRecoilState(userState);
+    const [confirmPassword, setConfirmPassword] = useState("");
     const classes = useStyles();
     let history = useHistory();
+    const [user, setUser] = useRecoilState(userState);
 
-    function authenticate(){
-        // TODO
-        fetch('http://localhost:8000/login', {
+    function registerUser(){
+        fetch('http://localhost:8000/register', {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -62,15 +62,13 @@ function Login() {
     }
 
     function validateForm() {
-        return email.length > 0 && password.length > 0;
+        return email.length > 0 && password.length > 0 && password === confirmPassword;
     }
 
     function handleSubmit(event) {
         event.preventDefault();
-        authenticate()
+        registerUser();
         history.push("/model")
-        // console.log(email)
-        // console.log(password)
     }
     return (
     <Grid container direction="row" justify="center" alignItems="center" >
@@ -78,9 +76,8 @@ function Login() {
             <form onSubmit={handleSubmit}>
                 <TextField className={classes.input} type='email' label="E-mail" variant="outlined" color="secondary" inputProps={{ 'aria-label': 'description' }} onChange={(e) => setEmail(e.target.value)}/>
                 <TextField className={classes.input} type='password' label="Password" variant="outlined" color="secondary" inputProps={{ 'aria-label': 'description' }} onChange={(e) => setPassword(e.target.value)}/>
-                <Button className={classes.button} type="submit" disabled={!validateForm()}>Login</Button>
-                {/* <Button className={classes.button}>Register</Button> */}
-                <Link to="/register">Register</Link>
+                <TextField className={classes.input} type='password' label="Confirm Password" variant="outlined" color="secondary" inputProps={{ 'aria-label': 'description' }} onChange={(e) => setConfirmPassword(e.target.value)}/>
+                <Button className={classes.button} type="submit" disabled={!validateForm()}>Register</Button>
             </form>
         </Paper>
     </Grid>    
@@ -88,4 +85,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default Register;

@@ -1,21 +1,23 @@
-import './App.css';
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link
+  Route
 } from "react-router-dom";
+import {RecoilRoot} from 'recoil';
 import Login from "./Login"
+import Register from "./Register"
 import Model from "./Model"
 
 function App() {
-
-
   return (
-    <Router>
-      <Switch>
+    <RecoilRoot>
+      <Router>
+        <Switch>
           <Route path="/login">
             <Login />
+          </Route>
+          <Route path="/register">
+            <Register />
           </Route>
           <Route path="/model">
             <Model />
@@ -24,7 +26,8 @@ function App() {
             <Login />
           </Route>
         </Switch>
-    </Router>
+      </Router>
+    </RecoilRoot>
   );
 }
 

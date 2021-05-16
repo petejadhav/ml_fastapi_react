@@ -1,7 +1,8 @@
 # App
 * Login page
-* 3 pages - hugginface models
+* Register page
+* 2 pages - hugginface models
 
 ## Components
-* Login 
+* Login, Register
 * Sidebar, ModelInput

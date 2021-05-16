@@ -1,26 +1,45 @@
 import React, { useState } from "react";
-import { Input, Button, Container } from '@material-ui/core';
+import { TextField, Button, Grid } from '@material-ui/core';
+import {useRecoilValue} from 'recoil';
+import {userState} from './state'
 
 function Model() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [Age, setAge] = useState("");
+    const user = useRecoilValue(userState);
+    const [modelScore, setModelScore] = useState("");
 
     function validateForm() {
-        return email.length > 0 && password.length > 0;
+        return Age > 0 && Age < 125;
+    }
+
+    function sendRequest() {
+        fetch('http://localhost:8000/model?item_id='+Age, {
+            method: 'GET',
+            headers: {
+              'Authorization': 'Bearer ' + user['token']
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            setModelScore(data['item_id']); 
+            console.log(modelScore)          
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
     }
 
     function handleSubmit(event) {
         event.preventDefault();
-        console.log(event)
+        sendRequest();
+        console.log(Age)
     }
     return (
-    <Container maxWidth="xl">
-        <form onSubmit={handleSubmit}>
-            <Input type='email' placeholder="E-mail" inputProps={{ 'aria-label': 'description' }} onChange={(e) => setEmail(e.target.value)}/>
-            <Input type='password' inputProps={{ 'aria-label': 'description' }} onChange={(e) => setPassword(e.target.value)}/>
-            <Button type="submit" disabled={!validateForm()}>Login</Button>
-        </form>
-    </Container>
+    <Grid container direction="row" justify="center" alignItems="center" >        
+        <TextField type='number' placeholder="Age" inputProps={{ 'aria-label': 'description' }} onChange={(e) => setAge(e.target.value)}/>
+        <Button disabled={!validateForm()} onClick={handleSubmit}>Get Scores</Button>        
+    </Grid>
     );
 }
 
