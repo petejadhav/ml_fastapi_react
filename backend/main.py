@@ -7,7 +7,6 @@ from jwt_auth_handler import signJWT, JWTBearer
 
 app = FastAPI()
 
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
