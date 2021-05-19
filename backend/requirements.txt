@@ -1,3 +1,4 @@
 fastapi
 uvicorn
 PyJWT
+psycopg2-binary

@@ -3,9 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import time
 
+from user_handler import UserDataHandler
 from jwt_auth_handler import signJWT, JWTBearer
 
 app = FastAPI()
+user_handler = UserDataHandler()
 
 app.add_middleware(
     CORSMiddleware,
@@ -15,30 +17,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-users =[{'email':"pr@gm.com", 'password':"pwd"}]
-
-def check_user(data: dict):
-    for user in users:
-        if user['email'] == data['email'] and user['password'] == data['password']:
-            return True
-    return False
-
-def add_user(data: dict):
-    users.append({'email':data['email'], 'password':data['password']})
-    return True
-
-def modifyUser(data: dict):
-    for i,user in enumerate(users):
-        if user['email'] == data['email']:
-            users[i]['password'] = data['password']
-            return True
-    return False
-
-
-
 @app.post("/login")
 def login(user = Body(...)):
-    if check_user(user):
+    if user_handler.authenticate_user(user):
         return signJWT(user['email'])
     return {
         "error": "Wrong login details!"
@@ -46,31 +27,30 @@ def login(user = Body(...)):
 
 @app.post("/register")
 def register(user = Body(...)):
-    if check_user(user):
+    if user_handler.check_user(user):
         return {
             "error": "User Email already exists."
         }
-    add_user(user)
+    user_handler.add_user(user)
     return signJWT(user['email'])
+
+@app.post("/changePassword", dependencies=[Depends(JWTBearer())])
+def changePassword(user = Body(...)):
+    if user_handler.authenticate_user(user):
+        user_handler.modify_user(user)
+        return signJWT(user['email'])
+    return {
+        "error": "User does not exist."
+    }
 
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
 
-
 # -H 'Authorization: Bearer <jwt>'
 @app.get("/model", dependencies=[Depends(JWTBearer())])
 def score_model(item_id: int):
     return {"item_id": item_id, "q": "some item"}
-
-@app.post("/changePassword", dependencies=[Depends(JWTBearer())])
-def changePassword(user = Body(...)):
-    if check_user(user):
-        modifyUser(user)
-        return signJWT(user['email'])
-    return {
-        "error": "User does not exist."
-    }
 
 @app.get('/time')
 def get_current_time():
