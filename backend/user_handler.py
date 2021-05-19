@@ -22,11 +22,15 @@ class UserDataHandler():
         query = "select * from public.users where email='{}'".format(data['email'])
         self.cursor.execute(query)
         rows = self.cursor.fetchall()
+        if len(rows) == 0:
+            return []
         return list(rows[0])
 
     def authenticate_user(self, data: dict):
+        if not self.check_user(data):
+            return False
         user = self.get_user(data)
-        return self.check_password(data['password'], user['password'])
+        return self.check_password(data['password'], user[2])
 
     def check_user(self, data: dict):
         if self.get_user(data):
@@ -34,7 +38,7 @@ class UserDataHandler():
         return False
 
     def add_user(self, data: dict):
-        if len(self.check_user(data)) > 0:
+        if self.check_user(data):
             return False
         data['password'] = self.password_hasher(data['password'])
         self.cursor.execute("INSERT INTO public.users (email,password) VALUES ( '{}', '{}' );".format(data['email'], data['password']))
@@ -56,8 +60,8 @@ class UserDataHandler():
     def password_hasher(self, plain_text_password: str):
         # Hash a password for the first time
         #   (Using bcrypt, the salt is saved into the hash itself)
-        return bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt())
+        return bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
     def check_password(self, plain_text_password, hashed_password):
         # Check hashed password. Using bcrypt, the salt is saved into the hash itself
-        return bcrypt.checkpw(plain_text_password.encode('utf-8'), hashed_password)
+        return bcrypt.checkpw(plain_text_password.encode('utf-8'), hashed_password.encode('utf-8'))
