@@ -1,4 +1,5 @@
 fastapi
 uvicorn
 PyJWT
+bcrypt
 psycopg2-binary
