@@ -3,8 +3,8 @@ version: "3.7"
 services:
     db:
         build: postgres_db
-        ports:
-          - 5432:5432
+        #ports:
+        #  - 5432:5432
         healthcheck:
           test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "postgres" ]
           timeout: 45s
@@ -22,8 +22,9 @@ services:
         build: backend
         environment:
           - PORT=80
-        ports:
-          - 8000:80
+          - DB_HOST=db
+        #ports:
+        #  - 8000:80
         depends_on:
           db:
             condition: service_healthy

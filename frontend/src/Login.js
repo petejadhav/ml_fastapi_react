@@ -38,7 +38,7 @@ function Login() {
 
     function authenticate(){
         // TODO
-        fetch('http://localhost:8000/login', {
+        fetch('/api/login', {
             method: 'POST',
             mode: 'cors',
             headers: {

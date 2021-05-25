@@ -1,10 +1,11 @@
 import psycopg2
 import bcrypt
+import config
 #users =[{'email':"pr@gm.com", 'password':"pwd"}]
 
 class UserDataHandler():
     def __init__(self):   
-        self.con = psycopg2.connect(database="testdb", user="postgres", password="postgres", host="db", port="5432")
+        self.con = psycopg2.connect(database="testdb", user="postgres", password="postgres", host=config.db_host, port="5432")
         self.cursor = self.con.cursor()
         if self.get_user_count() == 0:
             self.user_db_init_data()

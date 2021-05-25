@@ -13,7 +13,7 @@ function Model() {
     }
 
     function sendRequest() {
-        fetch('http://localhost:8000/model?item_id='+Age, {
+        fetch('/api/model?item_id='+Age, {
             method: 'GET',
             headers: {
               'Authorization': 'Bearer ' + user['token']

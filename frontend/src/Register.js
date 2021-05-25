@@ -38,7 +38,7 @@ function Register() {
     const [user, setUser] = useRecoilState(userState);
 
     function registerUser(){
-        fetch('http://localhost:8000/register', {
+        fetch('/api/register', {
             method: 'POST',
             mode: 'cors',
             headers: {

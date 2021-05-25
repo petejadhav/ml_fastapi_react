@@ -3,10 +3,11 @@ from typing import Dict
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import jwt
+import config
 
 
-JWT_SECRET = "secret"
-JWT_ALGORITHM = "HS256"
+JWT_SECRET = config.jwt_secret
+JWT_ALGORITHM = config.jwt_algorithm
 
 def token_response(token: str):
     return {
